@@ -56,11 +56,13 @@ class RegisterViewController: UIViewController {
         //RegisterButton
         registerButton.reactive.isEnabled <~ viewModel.canRegister
         registerButton.reactive.pressed = CocoaAction(viewModel.register)
-        viewModel.registerSignal.observeValues { (viewModel) in
+        
+        viewModel.register.values.observeValues { (viewModel) in
             guard let viewModel = viewModel else {
                 return
             }
             self.performSegue(withIdentifier: "success", sender: viewModel)
+
         }
 
     }

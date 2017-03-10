@@ -21,8 +21,7 @@ class RegisterViewModel {
     let canRegister: Property<Bool>
     var sendAuthCode : Action<(),Bool,NoError>!
     var register : Action<(),UserInfoViewModel?,NoError>!
-    var registerSignal: Signal<UserInfoViewModel?, NoError>
-    var registerObserver: Observer<UserInfoViewModel?, NoError>
+
     var timer: Timer?
     
     
@@ -37,6 +36,7 @@ class RegisterViewModel {
         canSendAuthCode = phone.combineLatest(with: countDown).map({ (phone, count) -> Bool in
             return phone.characters.count == 11 && count <= 0
         })
+        
         canRegister = phone.combineLatest(with: password).map({ (phone,password) -> Bool in
             return phone.characters.count == 11 && !password.isEmpty
         }).combineLatest(with: verifyCode).map({ (phoneAndPassword,verifyCode) -> Bool in
@@ -44,7 +44,6 @@ class RegisterViewModel {
         }).combineLatest(with: isPolicyCheckd).map({ (isAllFilled, isChecked) -> Bool in
             return isAllFilled && isChecked
         })
-        (registerSignal,registerObserver) = Signal<UserInfoViewModel?,NoError>.pipe()
         sendAuthCode = Action<(),Bool,NoError>(enabledIf:canSendAuthCode) {
             return self.createSendAuthCodeSignalProducer(phone: self.phone.value)
         }
@@ -89,14 +88,15 @@ class RegisterViewModel {
     }
     
     private func createRegisterSignalProducer(phone: String, password:String, verifyCode:String) -> SignalProducer<UserInfoViewModel?,NoError> {
-        let signalProducer = SignalProducer<UserInfoViewModel?, NoError>(registerSignal)
+        let (signal,observer) = Signal<UserInfoViewModel?,NoError>.pipe()
+        let signalProducer = SignalProducer<UserInfoViewModel?, NoError>(signal)
         UserService.register(withUsername: phone, password: password, verifyCode: verifyCode) {
-            [unowned self]
             (user) in
             if let user = user {
-                self.registerObserver.send(value: UserInfoViewModel(user))
+                observer.send(value: UserInfoViewModel(user))
+                observer.sendCompleted()
             } else {
-                self.registerObserver.send(value: nil)
+                observer.send(value: nil)
             }
         }
         return signalProducer
