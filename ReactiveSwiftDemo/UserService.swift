@@ -10,10 +10,10 @@ import Foundation
 
 class UserService {
     
-    static func register(withUsername username: String, password:String, verifyCode:String, completion: @escaping (Bool) -> Void) {
+    static func register(withUsername username: String, password:String, verifyCode:String, completion: @escaping (User?) -> Void) {
         let delay = 1.0
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + delay) {
-            completion(true)
+            completion(User(phone: username, password: password))
         }
     }
     

@@ -92,9 +92,8 @@ class RegisterViewModel {
         let signalProducer = SignalProducer<UserInfoViewModel?, NoError>(registerSignal)
         UserService.register(withUsername: phone, password: password, verifyCode: verifyCode) {
             [unowned self]
-            (success) in
-            if (success) {
-                let user = User(phone: phone, password: password)
+            (user) in
+            if let user = user {
                 self.registerObserver.send(value: UserInfoViewModel(user))
             } else {
                 self.registerObserver.send(value: nil)
