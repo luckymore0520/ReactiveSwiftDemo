@@ -20,7 +20,7 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var checkBox: UIButton!
     
     
-    private let viewModel: RegisterViewModel = RegisterViewModel()
+    var viewModel: RegisterViewModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
