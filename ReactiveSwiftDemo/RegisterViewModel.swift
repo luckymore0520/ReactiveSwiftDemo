@@ -36,7 +36,6 @@ class RegisterViewModel {
         canSendAuthCode = phone.combineLatest(with: countDown).map({ (phone, count) -> Bool in
             return phone.characters.count == 11 && count <= 0
         })
-        
         canRegister = phone.combineLatest(with: password).map({ (phone,password) -> Bool in
             return phone.characters.count == 11 && !password.isEmpty
         }).combineLatest(with: verifyCode).map({ (phoneAndPassword,verifyCode) -> Bool in

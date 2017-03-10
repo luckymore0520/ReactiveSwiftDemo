@@ -62,7 +62,6 @@ class RegisterViewController: UIViewController {
                 return
             }
             self.performSegue(withIdentifier: "success", sender: viewModel)
-
         }
 
     }
